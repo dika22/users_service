@@ -1,14 +1,13 @@
+use crate::{
+    models::users::{CreateUserDto, User, UserAuthDto},
+    services::user_service::UserService,
+    state::SharedState,
+};
 use axum::{
     Json,
     extract::{Path, State},
 };
 use uuid::Uuid;
-
-use crate::{
-    models::users::{CreateUserDto, User},
-    services::user_service::UserService,
-    state::SharedState,
-};
 
 pub async fn create_user(
     State(state): State<SharedState>,
@@ -42,4 +41,23 @@ pub async fn delete_user(State(state): State<SharedState>, Path(id): Path<Uuid>)
     } else {
         Json("User not found".to_string())
     }
+}
+
+pub async fn update_user(
+    State(state): State<SharedState>,
+    Path(id): Path<Uuid>,
+    Json(dto): Json<CreateUserDto>,
+) -> Json<User> {
+    let user = UserService::update_user(&state.db, id, dto).await.unwrap();
+
+    Json(user)
+}
+
+pub async fn login_user(
+    State(state): State<SharedState>,
+    Json(dto): Json<UserAuthDto>,
+) -> Json<User> {
+    let user = UserService::login_user(&state.db, dto).await.unwrap();
+
+    Json(user)
 }

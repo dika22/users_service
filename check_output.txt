@@ -1,0 +1,152 @@
+    Checking user_service v0.1.0 (/Users/adhika/rust/user_service)
+error[E0277]: the trait bound `i64: From<Uuid>` is not satisfied
+  --> src/repository/user_repository.rs:8:20
+   |
+ 8 |           let user = sqlx::query_as!(
+   |  ____________________^
+ 9 | |             User,
+10 | |             r#"
+11 | |             INSERT INTO users (name, email)
+...  |
+16 | |             dto.email
+17 | |         )
+   | |_________^ the trait `From<Uuid>` is not implemented for `i64`
+   |
+   = help: the following other types implement trait `From<T>`:
+             `i64` implements `From<bool>`
+             `i64` implements `From<i16>`
+             `i64` implements `From<i32>`
+             `i64` implements `From<i8>`
+             `i64` implements `From<u16>`
+             `i64` implements `From<u32>`
+             `i64` implements `From<u8>`
+             `i64` implements `From<zerocopy::byteorder::I16<O>>`
+           and 2 others
+   = note: required for `Uuid` to implement `Into<i64>`
+   = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `i64: From<Uuid>` is not satisfied
+  --> src/repository/user_repository.rs:25:21
+   |
+25 |         let users = sqlx::query_as!(User, r#"SELECT id, name, email FROM users ORDER BY name"#,)
+   |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `From<Uuid>` is not implemented for `i64`
+   |
+   = help: the following other types implement trait `From<T>`:
+             `i64` implements `From<bool>`
+             `i64` implements `From<i16>`
+             `i64` implements `From<i32>`
+             `i64` implements `From<i8>`
+             `i64` implements `From<u16>`
+             `i64` implements `From<u32>`
+             `i64` implements `From<u8>`
+             `i64` implements `From<zerocopy::byteorder::I16<O>>`
+           and 2 others
+   = note: required for `Uuid` to implement `Into<i64>`
+   = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+  --> src/repository/user_repository.rs:36:13
+   |
+36 |             id
+   |             ^^
+   |             |
+   |             expected `Uuid`, found `i64`
+   |             expected due to the type of this binding
+
+error[E0277]: the trait bound `i64: From<Uuid>` is not satisfied
+  --> src/repository/user_repository.rs:33:20
+   |
+33 |           let user = sqlx::query_as!(
+   |  ____________________^
+34 | |             User,
+35 | |             r#"SELECT id, name, email FROM users WHERE id = $1"#,
+36 | |             id
+37 | |         )
+   | |_________^ the trait `From<Uuid>` is not implemented for `i64`
+   |
+   = help: the following other types implement trait `From<T>`:
+             `i64` implements `From<bool>`
+             `i64` implements `From<i16>`
+             `i64` implements `From<i32>`
+             `i64` implements `From<i8>`
+             `i64` implements `From<u16>`
+             `i64` implements `From<u32>`
+             `i64` implements `From<u8>`
+             `i64` implements `From<zerocopy::byteorder::I16<O>>`
+           and 2 others
+   = note: required for `Uuid` to implement `Into<i64>`
+   = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+  --> src/repository/user_repository.rs:45:73
+   |
+45 |         let result = sqlx::query!(r#"DELETE FROM users WHERE id = $1"#, id)
+   |                                                                         ^^
+   |                                                                         |
+   |                                                                         expected `Uuid`, found `i64`
+   |                                                                         expected due to the type of this binding
+
+error[E0308]: mismatched types
+  --> src/repository/user_repository.rs:61:13
+   |
+61 |             id,
+   |             ^^
+   |             |
+   |             expected `Uuid`, found `i64`
+   |             expected due to the type of this binding
+
+error[E0277]: the trait bound `i64: From<Uuid>` is not satisfied
+  --> src/repository/user_repository.rs:53:20
+   |
+53 |           let user = sqlx::query_as!(
+   |  ____________________^
+54 | |             User,
+55 | |             r#"
+56 | |             UPDATE users
+...  |
+63 | |             dto.email
+64 | |         )
+   | |_________^ the trait `From<Uuid>` is not implemented for `i64`
+   |
+   = help: the following other types implement trait `From<T>`:
+             `i64` implements `From<bool>`
+             `i64` implements `From<i16>`
+             `i64` implements `From<i32>`
+             `i64` implements `From<i8>`
+             `i64` implements `From<u16>`
+             `i64` implements `From<u32>`
+             `i64` implements `From<u8>`
+             `i64` implements `From<zerocopy::byteorder::I16<O>>`
+           and 2 others
+   = note: required for `Uuid` to implement `Into<i64>`
+   = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `std::string::String: From<std::option::Option<std::string::String>>` is not satisfied
+  --> src/repository/user_repository.rs:72:25
+   |
+72 |           let user_auth = sqlx::query_as!(
+   |  _________________________^
+73 | |             UserAuth,
+74 | |             r#"
+75 | |             SELECT id, username, email, password_hash
+...  |
+80 | |             dto.password_hash
+81 | |         )
+   | |_________^ the trait `From<std::option::Option<std::string::String>>` is not implemented for `std::string::String`
+   |
+   = help: the following other types implement trait `From<T>`:
+             `std::string::String` implements `From<&mut str>`
+             `std::string::String` implements `From<&std::string::String>`
+             `std::string::String` implements `From<&str>`
+             `std::string::String` implements `From<Box<str>>`
+             `std::string::String` implements `From<Cow<'_, str>>`
+             `std::string::String` implements `From<PgCiText>`
+             `std::string::String` implements `From<Uuid>`
+             `std::string::String` implements `From<char>`
+             `std::string::String` implements `From<url::Url>`
+   = note: required for `std::option::Option<std::string::String>` to implement `Into<std::string::String>`
+   = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+Some errors have detailed explanations: E0277, E0308.
+For more information about an error, try `rustc --explain E0277`.
+error: could not compile `user_service` (bin "user_service") due to 8 previous errors
