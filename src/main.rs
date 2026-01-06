@@ -3,6 +3,7 @@ use sqlx::PgPool;
 use std::sync::Arc;
 use tokio::net::TcpListener;
 
+mod docs;
 mod handlers;
 mod models;
 mod repository;
@@ -27,11 +28,20 @@ async fn main() {
 
     let state = Arc::new(AppState { db });
 
-    let app = routes::create_router(state);
+    use docs::ApiDoc;
+    use utoipa::OpenApi;
+    use utoipa_swagger_ui::SwaggerUi;
 
-    let listener = TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    let app = routes::create_router(state)
+        .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()));
 
-    println!("🚀 Server running on 3000");
+    let port = std::env::var("PORT").unwrap_or("3001".to_string());
+    let host = std::env::var("HOST").unwrap_or("0.0.0.0".to_string());
+    let addr = format!("{}:{}", host, port);
+
+    let listener = TcpListener::bind(&addr).await.unwrap();
+
+    println!("🚀 Server running on {}", addr);
 
     serve(listener, app).await.unwrap();
 }

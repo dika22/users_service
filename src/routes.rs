@@ -11,5 +11,6 @@ pub fn create_router(state: SharedState) -> Router {
         .route("/users/:id", get(get_user_by_id).delete(delete_user))
         .route("/users/:id", put(update_user))
         .route("/users/login", post(login_user))
+        .route("/users/register", post(register_user))
         .with_state(state)
 }

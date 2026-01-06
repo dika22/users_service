@@ -52,12 +52,25 @@ impl UserService {
             .await
             .map_err(|e| e.to_string())?;
 
-        let email = user_auth.email.ok_or("User has no email")?;
+        let email = user_auth.email;
 
         let user = UserRepository::get_by_email(db, &email)
             .await
             .map_err(|e| e.to_string())?
             .ok_or("User profile not found")?;
+
+        Ok(user)
+    }
+
+    pub async fn register_user(
+        db: &PgPool,
+        dto: crate::models::users::RegisterUserDto,
+    ) -> Result<crate::models::users::UserAuth, String> {
+        let hash = bcrypt::hash(&dto.password, bcrypt::DEFAULT_COST).map_err(|e| e.to_string())?;
+
+        let user = UserRepository::register(db, dto, hash)
+            .await
+            .map_err(|e| e.to_string())?;
 
         Ok(user)
     }

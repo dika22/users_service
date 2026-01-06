@@ -10,11 +10,14 @@ A RESTful API for managing users, built with Rust, Axum, and SQLx.
 -   **ORM/Query Builder:** [SQLx](https://github.com/launchbadge/sqlx)
 -   **Runtime:** [Tokio](https://tokio.rs/)
 -   **Serialization:** Serde
+-   **Documentation:** [Utoipa](https://github.com/juhaku/utoipa) (Swagger UI)
+-   **Security:** Bcrypt (Password Hashing)
 
 ## Prerequisites
 
 -   [Rust](https://www.rust-lang.org/tools/install) (latest stable)
 -   [PostgreSQL](https://www.postgresql.org/) running locally or accessible via URL.
+-   [SQLx CLI](https://github.com/launchbadge/sqlx/tree/main/sqlx-cli): `cargo install sqlx-cli` (Recommended for migrations)
 
 ## Setup
 
@@ -27,24 +30,22 @@ A RESTful API for managing users, built with Rust, Axum, and SQLx.
 
 2.  **Environment Configuration:**
 
-    Create a `.env` file in the root directory and set your `DATABASE_URL`:
+    Create a `.env` file in the root directory:
 
     ```bash
     DATABASE_URL=postgres://postgres:postgres@localhost/mydb
+    RUST_LOG=debug
+    PORT=3001
+    HOST=0.0.0.0
     ```
-
-    Replace the credentials (`postgres:postgres`) and database name (`mydb`) with your actual PostgreSQL configuration.
 
 3.  **Database Setup:**
 
-    Ensure your database exists. You can use `sqlx-cli` to manage migrations if you have it installed, or create the table manually:
+    Run database migrations to set up the schema (including `users` and `users_auth` tables):
 
-    ```sql
-    CREATE TABLE users (
-        id UUID PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL UNIQUE
-    );
+    ```bash
+    sqlx database create
+    sqlx migrate run
     ```
 
 ## Running the Application
@@ -55,39 +56,52 @@ Run the server with cargo:
 cargo run
 ```
 
-The server will start at `http://0.0.0.0:3000`.
+The server will start at `http://0.0.0.0:3001`.
+
+## API Documentation
+
+Interactive API documentation is available via Swagger UI:
+
+-   **Swagger UI:** [http://localhost:3001/swagger-ui/](http://localhost:3001/swagger-ui/)
+-   **OpenAPI Spec:** [http://localhost:3001/api-docs/openapi.json](http://localhost:3001/api-docs/openapi.json)
 
 ## API Endpoints
 
-### Users
+### Auth & Users
 
-| Method | Endpoint     | Description           | Request Body          |
-| :----- | :----------- | :-------------------- | :-------------------- |
-| `GET`  | `/users`     | Get all users         | -                     |
-| `POST` | `/users`     | Create a new user     | `{ "name": "...", "email": "..." }` |
-| `GET`  | `/users/:id` | Get a user by ID      | -                     |
-| `DELETE`| `/users/:id`| Delete a user by ID   | -                     |
+| Method | Endpoint | Description | Request Body |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/users/register` | Register a new user | `{ "username": "...", "email": "...", "password": "...", "created_by": "..." }` |
+| `POST` | `/users/login` | Login user | `{ "email": "...", "password": "..." }` |
+| `GET` | `/users` | Get all users | - |
+| `POST` | `/users` | Create a simple user (Legacy) | `{ "name": "...", "email": "..." }` |
+| `GET` | `/users/:id` | Get a user by ID | - |
+| `PUT` | `/users/:id` | Update a user by ID | `{ "name": "...", "email": "..." }` |
+| `DELETE` | `/users/:id` | Delete a user by ID | - |
 
 ### Example Requests
 
-**Create User:**
+**Register User:**
 
 ```bash
-curl -X POST http://localhost:3000/users \
+curl -X POST http://localhost:3001/users/register \
   -H "Content-Type: application/json" \
-  -d '{"name": "John Doe", "email": "john@example.com"}'
+  -d '{"username": "johndoe", "email": "john@example.com", "password": "securepassword", "created_by": "system"}'
 ```
 
-**Get All Users:**
+**Login User:**
 
 ```bash
-curl http://localhost:3000/users
+curl -X POST http://localhost:3001/users/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "john@example.com", "password": "securepassword"}'
 ```
 
 ## Project Structure
 
 ```
 src/
+├── docs.rs         # Swagger/OpenAPI configuration
 ├── handlers/       # HTTP request handlers
 ├── models/         # Data structures and DTOs
 ├── repository/     # Database access layer

@@ -13,8 +13,12 @@ sqlx = { version = "0.7", features = [
     "runtime-tokio",
     "macros",
     "uuid",
+    "chrono",
 ] }
 tokio = { version = "1", features = ["full"] }
 uuid = { version = "1", features = ["serde", "v4"] }
 tower-http = { version = "0.5", features = ["cors"] }
 chrono = { version = "0.4", features = ["serde"] }
+bcrypt = "0.15"
+utoipa = { version = "4.2", features = ["axum_extras", "uuid", "chrono"] }
+utoipa-swagger-ui = { version = "6", features = ["axum"] }
